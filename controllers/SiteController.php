@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\User;
+use OAuth2\Request;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,11 +11,12 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SignupForm;
 
 class SiteController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
@@ -39,7 +42,7 @@ class SiteController extends Controller
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function actions()
     {
@@ -79,8 +82,6 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
-
-        $model->password = '';
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -96,6 +97,27 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     * Signs user up.
+     *
+     * @return mixed
+     */
+    public function actionSignup()
+    {
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -124,5 +146,22 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionAuthorize()
+    {
+        if (Yii::$app->getUser()->getIsGuest())
+            return $this->redirect('login');
+
+        /** @var $module \filsh\yii2\oauth2server\Module */
+        $module = Yii::$app->getModule('oauth2');
+        $response = $module->getServer()->handleAuthorizeRequest(Request::createFromGlobals(), new \OAuth2\Response(),!Yii::$app->getUser()->getIsGuest(), Yii::$app->getUser()->getId());
+        /** @var object $response \OAuth2\Response */
+        Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+
+        return $response->getParameters();
     }
 }

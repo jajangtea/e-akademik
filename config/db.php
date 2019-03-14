@@ -2,10 +2,11 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=mydemik',
+    'dsn' => 'mysql:host=localhost;dbname=ayom',
     'username' => 'root',
-    'password' => 'toor',
+    'password' => '',
     'charset' => 'utf8',
+    'tablePrefix' => 'tbl_'
 
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,

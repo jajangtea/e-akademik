@@ -51,3 +51,28 @@ $this->title = 'My Yii Application';
 
     </div>
 </div>
+<?php
+$js = <<<JS
+new Vue({
+    data:{},
+    methods: {}
+})
+JS;
+
+$this->registerJs($js, \yii\web\View::POS_END);
+?>
+
+<style>
+    .header{
+
+    }
+</style>
+<!-- before script -->
+<script>
+    new Vue({
+        data: {},
+        methods:{},
+        mounted:{}
+    })
+</script>
+<!-- after script -->
