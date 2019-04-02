@@ -19,6 +19,9 @@
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "filsh/yii2-oauth2-server": "*",
+        "hscstudio/yii2-export": "*",
+         "dmstr/yii2-adminlte-asset": ">2",
+        "kartik-v/yii2-grid": "@dev",
         "hscstudio/yii2-mimin": "~1.1.4"
     },
     "require-dev": {
