@@ -2,30 +2,33 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$db_simak = require __DIR__ . '/db_simak.php';
+$db_skkp = require __DIR__ . '/db_skkp.php';
+$db_akademik = require __DIR__ . '/db_akademik.php';
 $routes = require __DIR__ . '/routes.php';
 $oauth2 = require __DIR__ . '/oauth2.php';
+
 
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log','oauth2'],
+    'bootstrap' => ['log', 'oauth2'],
     'name' => 'aYom',
     'language' => 'id-ID',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'as access' => [
         'class' => '\hscstudio\mimin\components\AccessControl',
         'allowActions' => [
             // add wildcard allowed action here!
             'site/*',
-
             'debug/*',
             'gii/*',
             'api/*',
             'oauth2/*',
-            //'admin/*', // only in dev mode
+        //'admin/*', // only in dev mode
         ],
     ],
     'components' => [
@@ -60,6 +63,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'db_simak' => $db_simak,
+        'db_skkp' => $db_skkp,
+        'db_akademik' => $db_akademik,
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -70,7 +76,7 @@ $config = [
         ],
     ],
     'modules' => [
-        'gridview' =>  [
+        'gridview' => [
             'class' => '\kartik\grid\Module'
         ],
         'oauth2' => $oauth2,
@@ -91,22 +97,22 @@ if (YII_ENV_DEV) {
         'class' => 'yii\debug\Module',
         'panels' => [
             'user' => [
-                'class'=>'yii\debug\panels\UserPanel',
+                'class' => 'yii\debug\panels\UserPanel',
                 'ruleUserSwitch' => [
                     'allow' => true,
-                    //'roles' => ['admin'],
+                //'roles' => ['admin'],
                 ]
             ]
         ]
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+            // uncomment the following to add your IP if you are not connecting from localhost.
+            //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+            // uncomment the following to add your IP if you are not connecting from localhost.
+            //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
 
