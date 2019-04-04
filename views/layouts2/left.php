@@ -65,7 +65,7 @@ use hscstudio\mimin\components\Mimin;
         $menuItems = [
             ['label' => 'Home', 'url' => ['/admin']],
             ['label' => 'User', 'url' => ['/admin/rbac/user']],
-            [       
+            [
                 'label' => Yii::t('app','Akses Kontrol'),
                 'url' => ['/admin/rbac/route'],
                 'items' => [
@@ -79,15 +79,7 @@ use hscstudio\mimin\components\Mimin;
                 'items' => [
                     ['label' => 'Client', 'url' => ['/admin/application/client']]
                 ]
-            ],
-            [       
-                'label' => Yii::t('app','Cetak Absen'),
-                'url' => ['/admin/rbac/route'],
-                'items' => [
-                    ['label' => 'UTS', 'url' => ['/admin/krsmatkul']],
-                    ['label' => 'UAS', 'url' => ['/admin/krsmatkul']],
-                ]
-            ],
+            ]
         ];
         $items =  Mimin::filterMenu($menuItems);
         ?>
