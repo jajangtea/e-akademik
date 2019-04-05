@@ -120,51 +120,51 @@ class KrsmatkulController extends AdminController {
     }
 
     public function actionExportExcel() {
-//        $searchModel = new KrsmatkulSearch();
-//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new KrsmatkulSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         // Initalize the TBS instance
 
-        $sql = "SELECT * FROM krsmatkul km 
-                INNER JOIN krs kr ON km.idkrs=kr.idkrs
-                INNER JOIN penyelenggaraan p ON km.idpenyelenggaraan=p.idpenyelenggaraan
-                INNER JOIN profiles_mahasiswa pm ON kr.nim=pm.nim
-                INNER JOIN formulir_pendaftaran fp ON pm.no_formulir=fp.no_formulir
-                INNER JOIN matakuliah mk ON p.kmatkul=mk.kmatkul
-                INNER JOIN dosen dsn ON p.iddosen=dsn.iddosen
-                INNER JOIN kelas_mhs_detail kmd ON km.idkrsmatkul=kmd.idkrsmatkul
-                INNER JOIN kelas_mhs kmhs ON kmd.idkelas_mhs=kmhs.idkelas_mhs
-                WHERE kr.tahun=2018 
-                AND kr.idsmt=3 
-                AND dsn.iddosen=22
-                AND p.kjur=12 
-                AND kmhs.idkelas='B' 
-                AND kmhs.nama_kelas=1
-                ";
-        $cmd = \Yii::$app->db_simak->createCommand($sql)->queryAll();
+//        $sql = "SELECT * FROM krsmatkul km 
+//                INNER JOIN krs kr ON km.idkrs=kr.idkrs
+//                INNER JOIN penyelenggaraan p ON km.idpenyelenggaraan=p.idpenyelenggaraan
+//                INNER JOIN profiles_mahasiswa pm ON kr.nim=pm.nim
+//                INNER JOIN formulir_pendaftaran fp ON pm.no_formulir=fp.no_formulir
+//                INNER JOIN matakuliah mk ON p.kmatkul=mk.kmatkul
+//                INNER JOIN dosen dsn ON p.iddosen=dsn.iddosen
+//                INNER JOIN kelas_mhs_detail kmd ON km.idkrsmatkul=kmd.idkrsmatkul
+//                INNER JOIN kelas_mhs kmhs ON kmd.idkelas_mhs=kmhs.idkelas_mhs
+//                WHERE kr.tahun=2018 
+//                AND kr.idsmt=3 
+//                AND dsn.iddosen=22
+//                AND p.kjur=12 
+//                AND kmhs.idkelas='B' 
+//                AND kmhs.nama_kelas=1
+//                ";
+       //    $cmd = \Yii::$app->db_simak->createCommand($sql)->queryAll();
        
         $OpenTBS = new OpenTBS; // new instance of TBS
         // set template
-        $template = Yii::getAlias('@app/views/krsmatkul') . '/_uts.xlsx';
+        $template = Yii::getAlias('@app/modules/admin/views/krsmatkul') . '/_uts.xlsx';
         // Also merge some [onload] automatic fields (depends of the type of document).
         $OpenTBS->LoadTemplate($template);
         //$OpenTBS->VarRef['modelName']= "Category";
         $data = [];
         $no = 1;
 
-        foreach ($cmd as $mhs) {
-            $data[] = [
-                'no' => $no++,
-                'nim' => $mhs['nim'],
-                'nama_mhs' => $mhs['nama_mhs'],
-            ];
-        }
-//        foreach ($dataProvider->getModels() as $category) {
+//        foreach ($cmd as $mhs) {
 //            $data[] = [
 //                'no' => $no++,
-//                'nim' => $category->idkrs,
-//                'nama_mhs' => $category->idpenyelenggaraan,
+//                'nim' => $mhs['nim'],
+//                'nama_mhs' => $mhs['nama_mhs'],
 //            ];
 //        }
+        foreach ($dataProvider->getModels() as $category) {
+            $data[] = [
+                'no' => $no++,
+                'nim' => $category->krs->nim0->noFormulir->profilesMahasiswa->nim,
+                //'nama_mhs' => $category->nama_mhs,
+            ];
+        }
 //        echo '<pre>';
 //        print_r($data);
 //        echo '</pre>';

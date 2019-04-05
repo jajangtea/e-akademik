@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-   
+
 
     <?=
     GridView::widget([
@@ -26,9 +26,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'penyelenggaraan.tahun',
             'penyelenggaraan.kmatkul',
-            'penyelenggaraan.kmatkul0.nmatkul',
-            'penyelenggaraan.dosen.nama_dosen',
-            'krs.nim',
+            [
+                'attribute' => 'nmatkul',
+                'value' => 'penyelenggaraan.kmatkul0.nmatkul'
+            ],
+            [
+                'attribute' => 'nim',
+                'value' => 'krs.nim0.noFormulir.profilesMahasiswa.nim'
+            ],
+            [
+                'attribute' => 'nama_dosen',
+                'value' => 'penyelenggaraan.dosen.nama_dosen'
+            ],
             'krs.nim0.noFormulir.nama_mhs',
             ['class' => 'yii\grid\ActionColumn'],
         ],
