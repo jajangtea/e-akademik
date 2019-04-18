@@ -1,10 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
+use kartik\grid\GridView;
 
-/* @var $this yii\web\View */
+/* @var $this yii\web\iew */
 /* @var $searchModel app\models\simak\KrsmatkulSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -13,35 +12,41 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="krsmatkul-index">
 
-    <?php Pjax::begin(); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-
 
 
     <?=
     GridView::widget([
+        'panel' => [
+            'type' => GridView::TYPE_PRIMARY
+        ],
+        'toolbar' => [
+            ['content' => Html::a('<i class="glyphicon glyphicon-print"></i> Cetak', ['export-excel'], ['class' => 'btn btn-success pull-right'])],
+            '{export}',
+            '{toggleData}'
+        ],
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'penyelenggaraan.tahun',
-            'penyelenggaraan.kmatkul',
             [
-                'attribute' => 'nmatkul',
-                'value' => 'penyelenggaraan.kmatkul0.nmatkul'
-            ],
-            [
+                'label' => "NIM",
                 'attribute' => 'nim',
-                'value' => 'krs.nim0.noFormulir.profilesMahasiswa.nim'
+                'value' => function($data) {
+                    return $data["nim"];
+                }
             ],
             [
-                'attribute' => 'nama_dosen',
-                'value' => 'penyelenggaraan.dosen.nama_dosen'
+                'label' => "Nama Mahasiswa",
+                'attribute' => 'nama_mhs',
+                'value' => function($data) {
+                    return $data["nama_mhs"];
+                }
             ],
-            'krs.nim0.noFormulir.nama_mhs',
-            ['class' => 'yii\grid\ActionColumn'],
+                    //'nkelas',
+        //'nmatkul',
         ],
     ]);
     ?>
-    <?php Pjax::end(); ?>
+
 </div>

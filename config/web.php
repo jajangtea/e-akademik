@@ -13,7 +13,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'oauth2'],
-    'name' => 'aYom',
+    'name' => 'e-akademik',
     'language' => 'id-ID',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -24,6 +24,7 @@ $config = [
         'allowActions' => [
             // add wildcard allowed action here!
             'site/*',
+            'surat-keterangan/*',
             'debug/*',
             'gii/*',
             'api/*',

@@ -3,6 +3,8 @@
 namespace app\models\simak;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "v_krsmhs".
@@ -28,29 +30,26 @@ use Yii;
  * @property string $nama_dosen
  * @property int $aktif
  */
-class VKrsmhs extends \yii\db\ActiveRecord
-{
+class VKrsmhs extends ActiveRecord {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'v_krsmhs';
     }
 
     /**
-     * @return \yii\db\Connection the database connection used by this AR class.
+     * @return Connection the database connection used by this AR class.
      */
-    public static function getDb()
-    {
+    public static function getDb() {
         return Yii::$app->get('db_simak');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['idkrsmatkul', 'idpenyelenggaraan', 'idkrs', 'batal', 'kjur', 'idsmt', 'tasmt', 'sah', 'aktif'], 'integer'],
             [['idpenyelenggaraan', 'batal', 'tgl_krs', 'no_krs', 'nim', 'kjur', 'idsmt', 'tahun', 'tasmt', 'sah', 'tgl_disahkan', 'kmatkul', 'nmatkul', 'sks', 'semester', 'nidn'], 'required'],
@@ -62,14 +61,14 @@ class VKrsmhs extends \yii\db\ActiveRecord
             [['semester'], 'string', 'max' => 2],
             [['nidn'], 'string', 'max' => 15],
             [['nama_dosen'], 'string', 'max' => 112],
+       
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'idkrsmatkul' => 'Idkrsmatkul',
             'idpenyelenggaraan' => 'Idpenyelenggaraan',
@@ -93,4 +92,7 @@ class VKrsmhs extends \yii\db\ActiveRecord
             'aktif' => 'Aktif',
         ];
     }
+
+   
+
 }

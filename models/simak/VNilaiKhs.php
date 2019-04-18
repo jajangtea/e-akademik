@@ -30,29 +30,26 @@ use Yii;
  * @property string $nama_dosen
  * @property int $aktif
  */
-class VNilaiKhs extends \yii\db\ActiveRecord
-{
+class VNilaiKhs extends \yii\db\ActiveRecord {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'v_nilai_khs';
     }
 
     /**
      * @return \yii\db\Connection the database connection used by this AR class.
      */
-    public static function getDb()
-    {
+    public static function getDb() {
         return Yii::$app->get('db_simak');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['idkrs', 'idkrsmatkul', 'idpenyelenggaraan', 'idsmt', 'tasmt', 'idkonsentrasi', 'ispilihan', 'islintas_prodi', 'telah_isi_kuesioner', 'iddosen', 'aktif'], 'integer'],
             [['idpenyelenggaraan', 'nim', 'idsmt', 'tahun', 'tasmt', 'kmatkul', 'nmatkul', 'sks', 'idkonsentrasi', 'semester', 'nidn'], 'required'],
@@ -71,8 +68,7 @@ class VNilaiKhs extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'idkrs' => 'Idkrs',
             'idkrsmatkul' => 'Idkrsmatkul',
@@ -98,4 +94,16 @@ class VNilaiKhs extends \yii\db\ActiveRecord
             'aktif' => 'Aktif',
         ];
     }
+
+    public function getKrs() {
+        return $this->hasOne(Krs::className(), ['idkrs' => 'idkrs']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPenyelenggaraan() {
+        return $this->hasOne(Penyelenggaraan::className(), ['idpenyelenggaraan' => 'idpenyelenggaraan']);
+    }
+
 }

@@ -3,12 +3,13 @@
 namespace app\modules\admin\controllers;
 
 use app\models\simak\Krsmatkul;
-use app\models\simak\KrsmatkulSearch;
+use app\models\simak\VNilaiKhsSearch;
+use app\modules\admin\AdminController;
 use hscstudio\export\OpenTBS;
 use Yii;
+use yii\data\SqlDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
-use app\modules\admin\AdminController;
 
 /**
  * KrsmatkulController implements the CRUD actions for Krsmatkul model.
@@ -33,13 +34,22 @@ class KrsmatkulController extends AdminController {
      * Lists all Krsmatkul models.
      * @return mixed
      */
-    public function actionIndex() {
-        $searchModel = new KrsmatkulSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+    public static function getDb() {
+        return Yii::$app->get('db_simak');
+    }
 
+    public function actionIndex() {
+        Yii::$app->session['nama_kelas'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['nama_kelas'];
+        Yii::$app->session['idkelas'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['idkelas'];
+        Yii::$app->session['nama_dosen'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['nama_dosen'];
+        Yii::$app->session['tahun_cetak'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['tahun'];
+        Yii::$app->session['kmatkul'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['kmatkul'];
+        Yii::$app->session['idsmt_cetak'] = Yii::$app->request->queryParams['VNilaiKhsSearch']['idsmt'];
+        $searchModel = new VNilaiKhsSearch;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
-                    'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
         ]);
     }
 
@@ -120,60 +130,84 @@ class KrsmatkulController extends AdminController {
     }
 
     public function actionExportExcel() {
-        $searchModel = new KrsmatkulSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        // Initalize the TBS instance
+        $dosen = Yii::$app->session['nama_dosen'];
+        $tahun = Yii::$app->session['tahun'];
+        $kmatkul = Yii::$app->session['kmatkul'];
+        $idsmt = $idsmt = Yii::$app->session['idsmt'];
+        $idkelas = Yii::$app->session['idkelas'];
+        $nama_kelas = Yii::$app->session['nama_kelas'];
+        $kjur = Yii::$app->session['kjur'];
+        $sql = "SELECT * FROM v_kelas_mhs vkm 
+                INNER JOIN krsmatkul km ON vkm.idkrsmatkul=km.idkrsmatkul 
+                INNER JOIN krs kr ON km.idkrs=kr.idkrs
+                INNER JOIN register_mahasiswa rm ON kr.nim=rm.nim
+                INNER JOIN formulir_pendaftaran fp ON rm.no_formulir=fp.no_formulir
+                INNER JOIN penyelenggaraan pn ON  vkm.idpenyelenggaraan=pn.idpenyelenggaraan
+                INNER JOIN matakuliah mkul ON pn.kmatkul=mkul.kmatkul
+                WHERE 
+                vkm.idkelas='$idkelas' AND
+                mkul.kmatkul ='$kmatkul' AND
+                pn.tahun ='$tahun' AND
+                pn.kjur LIKE '%$kjur%' AND 
+                kr.idsmt  LIKE '%$idsmt%' AND
+                vkm.nama_kelas='$nama_kelas' AND
+                vkm.nama_dosen  LIKE '%$dosen%'";
+        $sqlHeader = "  SELECT DISTINCT (vkm.idpenyelenggaraan),vkm.hari,vkm.jam_masuk,vkm.jam_keluar,mkul.kmatkul,mkul.nmatkul,rk.namaruang,vkm.nama_kelas,vkm.nama_dosen
+                        FROM v_kelas_mhs vkm 
+                        INNER JOIN krsmatkul km ON vkm.idkrsmatkul=km.idkrsmatkul 
+                        INNER JOIN krs kr ON km.idkrs=kr.idkrs 
+                        INNER JOIN register_mahasiswa rm ON kr.nim=rm.nim 
+                        INNER JOIN formulir_pendaftaran fp ON rm.no_formulir=fp.no_formulir 
+                        INNER JOIN penyelenggaraan pn ON vkm.idpenyelenggaraan=pn.idpenyelenggaraan 
+                        INNER JOIN matakuliah mkul ON pn.kmatkul=mkul.kmatkul 
+                        INNER JOIN ruangkelas rk ON vkm.idruangkelas=rk.idruangkelas
+                        WHERE
+                        vkm.idkelas='$idkelas' AND
+                        mkul.kmatkul ='$kmatkul' AND
+                        pn.tahun ='$tahun' AND
+                        pn.kjur LIKE '%$kjur%' AND 
+                        kr.idsmt  LIKE '%$idsmt%' AND
+                        vkm.nama_kelas='$nama_kelas' AND
+                        vkm.nama_dosen  LIKE '%$dosen%'
+                        ";
+        $cmdHeader = \Yii::$app->db_simak->createCommand($sqlHeader)->queryAll();
 
-//        $sql = "SELECT * FROM krsmatkul km 
-//                INNER JOIN krs kr ON km.idkrs=kr.idkrs
-//                INNER JOIN penyelenggaraan p ON km.idpenyelenggaraan=p.idpenyelenggaraan
-//                INNER JOIN profiles_mahasiswa pm ON kr.nim=pm.nim
-//                INNER JOIN formulir_pendaftaran fp ON pm.no_formulir=fp.no_formulir
-//                INNER JOIN matakuliah mk ON p.kmatkul=mk.kmatkul
-//                INNER JOIN dosen dsn ON p.iddosen=dsn.iddosen
-//                INNER JOIN kelas_mhs_detail kmd ON km.idkrsmatkul=kmd.idkrsmatkul
-//                INNER JOIN kelas_mhs kmhs ON kmd.idkelas_mhs=kmhs.idkelas_mhs
-//                WHERE kr.tahun=2018 
-//                AND kr.idsmt=3 
-//                AND dsn.iddosen=22
-//                AND p.kjur=12 
-//                AND kmhs.idkelas='B' 
-//                AND kmhs.nama_kelas=1
-//                ";
-       //    $cmd = \Yii::$app->db_simak->createCommand($sql)->queryAll();
-       
+
+//        echo $sql;
+//        exit;
+        $cmd = \Yii::$app->db_simak->createCommand($sql)->queryAll();
         $OpenTBS = new OpenTBS; // new instance of TBS
-        // set template
         $template = Yii::getAlias('@app/modules/admin/views/krsmatkul') . '/_uts.xlsx';
-        // Also merge some [onload] automatic fields (depends of the type of document).
         $OpenTBS->LoadTemplate($template);
-        //$OpenTBS->VarRef['modelName']= "Category";
         $data = [];
         $no = 1;
-
-//        foreach ($cmd as $mhs) {
-//            $data[] = [
-//                'no' => $no++,
-//                'nim' => $mhs['nim'],
-//                'nama_mhs' => $mhs['nama_mhs'],
-//            ];
-//        }
-        foreach ($dataProvider->getModels() as $category) {
+        foreach ($cmd as $mhs) {
             $data[] = [
                 'no' => $no++,
-                'nim' => $category->krs->nim0->noFormulir->profilesMahasiswa->nim,
-                //'nama_mhs' => $category->nama_mhs,
+                'nim' => $mhs['nim'],
+                'nama_mhs' => $mhs['nama_mhs'],
             ];
         }
-//        echo '<pre>';
-//        print_r($data);
-//        echo '</pre>';
-//        exit;
 
+        foreach ($cmdHeader as $header) {
+            $dataHeader[] = [
+                'hari' => Krsmatkul::getHari($header['hari']),
+                'jam_masuk' => $header['jam_masuk'],
+                'jam_keluar' => $header['jam_keluar'],
+                'kmatkul' => $header['kmatkul'],
+                'nmatkul' => $header['nmatkul'],
+                'namaruang' => $header['namaruang'],
+                'nama_kelas' => $header['nama_kelas'],
+                'nama_dosen' => $header['nama_dosen'],
+            ];
+        }
         $OpenTBS->MergeBlock('data', $data);
+        $OpenTBS->MergeBlock('dataHeader', $dataHeader);
         // Output the result as a file on the server. You can change output file
-        $OpenTBS->Show(OPENTBS_DOWNLOAD, '_export.xlsx'); // Also merges all [onshow] automatic fields.
+        $OpenTBS->Show(OPENTBS_DOWNLOAD, '_uts.xlsx'); // Also merges all [onshow] automatic fields.
         exit;
     }
+
+    
 
 }

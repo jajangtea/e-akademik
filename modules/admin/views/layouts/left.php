@@ -18,16 +18,6 @@ use hscstudio\mimin\components\Mimin;
             </div>
         </div>
 
-        <!-- search form -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search..."/>
-              <span class="input-group-btn">
-                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-        </form>
         <!-- /.search form -->
         <?php
         [
@@ -40,7 +30,7 @@ use hscstudio\mimin\components\Mimin;
                 'icon' => 'share',
                 'url' => '#',
                 'items' => [
-                    ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
+                    ['label' => 'Gii', 'ic  on' => 'file-code-o', 'url' => ['/gii'],],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
                     [
                         'label' => 'Level One',
@@ -73,11 +63,12 @@ use hscstudio\mimin\components\Mimin;
                     ['label' => 'Roles', 'url' => ['/admin/rbac/role']],
                     ['label' => 'User', 'url' => ['/admin/rbac/user']],
                 ]
-            ],[
-                'label' => Yii::t('app', 'Aplikasi'),
+            ],
+            [
+                'label' => Yii::t('app', 'Setting Prodi'),
                 'url' => ['#'],
                 'items' => [
-                    ['label' => 'Client', 'url' => ['/admin/application/client']]
+                    ['label' => 'Prodi', 'url' => ['/admin/setprodi']]
                 ]
             ],
             [       
@@ -86,6 +77,7 @@ use hscstudio\mimin\components\Mimin;
                 'items' => [
                     ['label' => 'UTS', 'url' => ['/admin/krsmatkul']],
                     ['label' => 'UAS', 'url' => ['/admin/krsmatkul']],
+                     
                 ]
             ],
         ];

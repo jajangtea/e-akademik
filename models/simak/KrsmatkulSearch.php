@@ -2,9 +2,10 @@
 
 namespace app\models\simak;
 
+use app\models\simak\Krsmatkul;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\simak\Krsmatkul;
 
 /**
  * KrsmatkulSearch represents the model behind the search form of `app\models\simak\Krsmatkul`.
@@ -16,21 +17,18 @@ class KrsmatkulSearch extends Krsmatkul {
      */
     public $nim;
     public $nama_dosen;
-    public $nmatkul;
+    public $kmatkul;
+    public $tahun;
     public $krs;
-    public $penyelenggaraan;
-    public $profiles_mahasiswa;
-    public $formulir_pendaftaran;
-    public $matakuliah;
-    public $dosen;
-    public $kelas_mhs_detail;
-    public $kelas_mhs;
-    public $register_mahasiswa;
+    public $kjur;
+    public $idsmt;
+    public $nama_mhs;
+    public $k_status;
 
     public function rules() {
         return [
             [['idkrsmatkul', 'idkrs', 'idpenyelenggaraan', 'batal'], 'integer'],
-            [['krs', 'penyelenggaraan', 'nim', 'nama_dosen', 'profiles_mahasiswa','nmatkul', 'formulir_pendaftaran', 'matakuliah', 'dosen', 'kelas_mhs_detail', 'kelas_mhs', 'register_mahasiswa'], 'safe'],
+            [['krs', 'penyelenggaraan', 'nim', 'nama_dosen', 'nama_mhs', 'kjur', 'k_status', 'tahun', 'idsmt', 'profiles_mahasiswa', 'kmatkul', 'formulir_pendaftaran', 'matakuliah', 'dosen', 'kelas_mhs_detail', 'kelas_mhs', 'register_mahasiswa'], 'safe'],
         ];
     }
 
@@ -50,22 +48,15 @@ class KrsmatkulSearch extends Krsmatkul {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $sql = "select * from krsmatkul km 
-inner join krs kr on km.idkrs=kr.idkrs
-inner join penyelenggaraan p on km.idpenyelenggaraan=p.idpenyelenggaraan
-inner join profiles_mahasiswa pm on kr.nim=pm.nim
-inner join formulir_pendaftaran fp on pm.no_formulir=fp.no_formulir
-inner join matakuliah mk on p.kmatkul=mk.kmatkul
-inner join dosen dsn on p.iddosen=dsn.iddosen
-inner join kelas_mhs_detail kmd on km.idkrsmatkul=kmd.idkrsmatkul
-inner join kelas_mhs kmhs on kmd.idkelas_mhs=kmhs.idkelas_mhs";
+
         $query = Krsmatkul::find();
-        $query->joinWith(['krs', 'krs.nim0', 'krs.nim0.noFormulir', 'krs.nim0.noFormulir.profilesMahasiswa', 'penyelenggaraan', 'penyelenggaraan.dosen', 'penyelenggaraan.kmatkul0']);
+        $query->joinWith(['krs', 'krs.nim0', 'krs.nim0.noFormulir', 'krs.nim0.noFormulir.profilesMahasiswa', 'penyelenggaraan', 'penyelenggaraan.dosen', 'penyelenggaraan.kmatkul0', 'krs.nim0.dulangs']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+           
         ]);
 
         $dataProvider->sort->attributes['nim'] = [
@@ -74,6 +65,7 @@ inner join kelas_mhs kmhs on kmd.idkelas_mhs=kmhs.idkelas_mhs";
             'asc' => ['profiles_mahasiswa.nim' => SORT_ASC],
             'desc' => ['profiles_mahasiswa.nim' => SORT_DESC],
         ];
+
         // Lets do the same with country now
         $dataProvider->sort->attributes['nama_dosen'] = [
             'asc' => ['dosen.nama_dosen' => SORT_ASC],
@@ -84,6 +76,16 @@ inner join kelas_mhs kmhs on kmd.idkelas_mhs=kmhs.idkelas_mhs";
             'desc' => ['matakuliah.nmatkul' => SORT_DESC],
         ];
 
+        $dataProvider->sort->attributes['tahun'] = [
+            'asc' => ['penyelenggaraan.tahun' => SORT_ASC],
+            'desc' => ['penyelenggaraan.tahun' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['nama_mhs'] = [
+            'asc' => ['formulir_pendaftaran.nama_mhs' => SORT_ASC],
+            'desc' => ['formulir_pendaftaran.nama_mhs' => SORT_DESC],
+        ];
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -91,6 +93,8 @@ inner join kelas_mhs kmhs on kmd.idkelas_mhs=kmhs.idkelas_mhs";
             // $query->where('0=1');
             return $dataProvider;
         }
+
+
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -101,9 +105,13 @@ inner join kelas_mhs kmhs on kmd.idkelas_mhs=kmhs.idkelas_mhs";
                         // 'profiles_mahasiswa.nim'=>$this->nim,
                 ])
                 ->andFilterWhere(['like', 'profiles_mahasiswa.nim', $this->nim])
-                ->andFilterWhere(['like', 'matakuliah.nmatkul', $this->nmatkul])
+                ->andFilterWhere(['like', 'matakuliah.kmatkul', $this->kmatkul])
+                ->andFilterWhere(['like', 'krs.tahun', Yii::$app->session['tahun']])
+                ->andFilterWhere(['like', 'penyelenggaraan.kjur', Yii::$app->session['kjur']])
+                ->andFilterWhere(['like', 'dulang.idsmt', Yii::$app->session['idsmt']])
+                ->andFilterWhere(['like', 'formulir_pendaftaran.nama_mhs', $this->nama_mhs])
+                ->andFilterWhere(['like', 'dulang.k_status', "A"])
                 ->andFilterWhere(['like', 'dosen.nama_dosen', $this->nama_dosen]);
-
         return $dataProvider;
     }
 

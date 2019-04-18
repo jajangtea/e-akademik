@@ -22,7 +22,9 @@
         "hscstudio/yii2-export": "*",
          "dmstr/yii2-adminlte-asset": ">2",
         "kartik-v/yii2-grid": "@dev",
-        "hscstudio/yii2-mimin": "~1.1.4"
+        "hscstudio/yii2-mimin": "~1.1.4",
+        "2amigos/qrcode-library": "~1.1",
+        "mdmsoft/yii2-autonumber": "~1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

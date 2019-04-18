@@ -3,6 +3,9 @@
 namespace app\models\simak;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "krsmatkul".
@@ -24,29 +27,26 @@ use Yii;
  * @property NilaiUas $nilaiUas
  * @property NilaiUts $nilaiUts
  */
-class Krsmatkul extends \yii\db\ActiveRecord
-{
+class Krsmatkul extends ActiveRecord {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'krsmatkul';
     }
 
     /**
-     * @return \yii\db\Connection the database connection used by this AR class.
+     * @return Connection the database connection used by this AR class.
      */
-    public static function getDb()
-    {
+    public static function getDb() {
         return Yii::$app->get('db_simak');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['idkrs', 'idpenyelenggaraan', 'batal'], 'required'],
             [['idkrs', 'idpenyelenggaraan', 'batal'], 'integer'],
@@ -58,8 +58,7 @@ class Krsmatkul extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'idkrsmatkul' => 'Idkrsmatkul',
             'idkrs' => 'Idkrs',
@@ -69,90 +68,134 @@ class Krsmatkul extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getKbmDetails()
-    {
+    public function getKbmDetails() {
         return $this->hasMany(KbmDetail::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getKelasMhsDetail()
-    {
+    public function getKelasMhsDetail() {
         return $this->hasOne(KelasMhsDetail::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getKrs()
-    {
+    public function getKrs() {
         return $this->hasOne(Krs::className(), ['idkrs' => 'idkrs']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPenyelenggaraan()
-    {
+    public function getPenyelenggaraan() {
         return $this->hasOne(Penyelenggaraan::className(), ['idpenyelenggaraan' => 'idpenyelenggaraan']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiAbsensi()
-    {
+    public function getNilaiAbsensi() {
         return $this->hasOne(NilaiAbsensi::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiImported()
-    {
+    public function getNilaiImported() {
         return $this->hasOne(NilaiImported::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiMatakuliah()
-    {
+    public function getNilaiMatakuliah() {
         return $this->hasOne(NilaiMatakuliah::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiQuizzes()
-    {
+    public function getNilaiQuizzes() {
         return $this->hasMany(NilaiQuiz::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiTugas()
-    {
+    public function getNilaiTugas() {
         return $this->hasMany(NilaiTugas::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiUas()
-    {
+    public function getNilaiUas() {
         return $this->hasOne(NilaiUas::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getNilaiUts()
-    {
+    public function getNilaiUts() {
         return $this->hasOne(NilaiUts::className(), ['idkrsmatkul' => 'idkrsmatkul']);
     }
+
+    public static function namaSemester() {
+        return [
+            '1' => 'Ganjil',
+            '2' => 'Genap',
+            '3' => 'Pendek'
+        ];
+    }
+
+    public static function TampilNamaSemester($kode) {
+        switch ($kode) {
+            case 1 :
+                $nama_semester = "Ganjil";
+                break;
+            case 2 :
+                $nama_semester = "Genap";
+                break;
+            case 3 :
+                $nama_semester = "Pendek";
+                break;
+            default :
+                $nama_semester = "Semester Belum dipilih";
+        }
+        return $nama_semester;
+    }
+    
+     public static function getHari($kode) {
+        switch ($kode) {
+            case 1 :
+                $nama_hari = "Senin";
+                break;
+            case 2 :
+                  $nama_hari = "Selasa";
+                break;
+            case 3 :
+                 $nama_hari = "Rabu";
+                break;
+            case 4 :
+                 $nama_hari = "Kamis";
+                break;
+            case 5 :
+                 $nama_hari = "Jumat";
+                break;
+            case 6 :
+                 $nama_hari = "Sabtu";
+                break;
+            case 7 :
+                 $nama_hari = "Minggu";
+                break;
+            default :
+                $nama_hari = "Hari belum diatur.";
+        }
+        return $nama_hari;
+    }
+
 }
