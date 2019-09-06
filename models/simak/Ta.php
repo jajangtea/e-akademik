@@ -51,4 +51,5 @@ class Ta extends \yii\db\ActiveRecord
             'tahun_akademik' => 'Tahun Akademik',
         ];
     }
+    
 }

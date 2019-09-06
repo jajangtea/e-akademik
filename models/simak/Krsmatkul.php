@@ -169,6 +169,23 @@ class Krsmatkul extends ActiveRecord {
         return $nama_semester;
     }
     
+    public static function TampilNamaProdi($kode) {
+        switch ($kode) {
+            case 12 :
+                $prodi = "TEKNIK INFORMATIKA";
+                break;
+            case 32 :
+                $prodi = "SISTEM INFORMASI";
+                break;
+            case 42 :
+                $prodi = "SISTEM INFORMASI KONSETRASI KOMPUTER AKUNTANSI";
+                break;
+            default :
+                $prodi = "Kode Prodi tidak ditemukan.";
+        }
+        return $prodi;
+    }
+    
      public static function getHari($kode) {
         switch ($kode) {
             case 1 :

@@ -141,7 +141,7 @@ use app\models\simak\Krsmatkul;
             <table class="ttd">
                 <tr>
                     <td style="width: 100%;">
-                        <p class="fcentersize"><span style="text-decoration: underline;">SURAT KETERANGAN AKTIF KULIAH</span></p>
+                        <p class="fcentersize"><span style="text-decoration: underline;">SURAT KETERANGAN</span></p>
                         <p>Nomor <?php foreach ($dataProviderNo as $mhsNo){
                             echo $mhsNo['nomor_surat'];
                         }?></p>
@@ -150,7 +150,7 @@ use app\models\simak\Krsmatkul;
             </table>
             <br/>
             <div class="txt-tengah">
-                <p>Puket I Bidang akademik Sekolah Tinggi Teknologi Indonesia Tanjungpinang dengan ini menerangkan :</p>
+                <p>Yang bertandatangan dibawah ini Puket I Bidang akademik Sekolah Tinggi Teknologi Indonesia Tanjungpinang dengan ini menerangkan bahwa :</p>
             </div>
             <table class="list">
                 <?php

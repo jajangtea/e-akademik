@@ -25,6 +25,7 @@ $config = [
             // add wildcard allowed action here!
             'site/*',
             'surat-keterangan/*',
+            'prd-pengajuan/*',
             'debug/*',
             'gii/*',
             'api/*',

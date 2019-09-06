@@ -41,10 +41,11 @@ class SuratKeterangan extends \yii\db\ActiveRecord {
         return [
             [['tahunsmt'], 'unique'],
             [['nomor_surat'], 'unique'],
-            [['keperluan'], 'required'],
+            [['keperluan', 'id_surat'], 'required'],
             [['nomor_surat'], 'autonumber', 'format' => 'formatRomawi'],
             [['nim'], 'integer'],
-            [['nomor_surat', 'nama', 'alamat', 'idsmt', 'tahunsmt'], 'string', 'max' => 200],
+            [['nomor_surat', 'nama', 'alamat', 'idsmt', 'tahunsmt', 'authqr'], 'string', 'max' => 200],
+            [['judul'], 'string', 'max' => 500],
             [['tahun'], 'string', 'max' => 10],
             [['keperluan'], 'string', 'max' => 250],
         ];
@@ -60,9 +61,14 @@ class SuratKeterangan extends \yii\db\ActiveRecord {
             'idsmt' => 'Semester',
             'tahunsmt' => 'tahunsmt',
             'nama' => 'Nama',
+            'authqr' => 'authqr',
             'tahun' => 'Tahun Akademik',
             'keperluan' => 'Keperluan',
         ];
+    }
+
+    public function generateQr() {
+        return Yii::$app->security->generateRandomString();
     }
 
 }

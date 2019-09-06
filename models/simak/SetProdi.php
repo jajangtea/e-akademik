@@ -14,6 +14,7 @@ use yii\db\Connection;
 class SetProdi extends Model {
     public $kjur;
     public $tahun;
+    public $tahun_akademik;
     public $idsmt;
     /**
      * {@inheritdoc}
@@ -30,6 +31,7 @@ class SetProdi extends Model {
     public function rules() {
         return [
             [['kjur', 'tahun', 'idsmt'], 'required','message'=>''],
+            [['tahun_akademik'], 'string'],
         ];
     }
 

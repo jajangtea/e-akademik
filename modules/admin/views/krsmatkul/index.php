@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_PRIMARY
         ],
         'toolbar' => [
-            ['content' => Html::a('<i class="glyphicon glyphicon-print"></i> Cetak', ['export-excel'], ['class' => 'btn btn-success pull-right'])],
+            ['content' => Html::a('<i class="glyphicon glyphicon-print"></i> Cetak', ['export-excel','namadosen'=>$_GET["VNilaiKhsSearch"]["nama_dosen"],'kmatkul'=>$_GET["VNilaiKhsSearch"]["kmatkul"]], ['class' => 'btn btn-success pull-right'])],
             '{export}',
             '{toggleData}'
         ],

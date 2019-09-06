@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\simak\Krsmatkul;
+use app\models\simak\PrdPengajuanSearch;
 use app\models\SuratKeterangan;
 use app\models\SuratKeteranganSearch;
 use Da\QrCode\QrCode;
@@ -55,6 +56,16 @@ class SuratKeteranganController extends Controller {
                     'searchModelSuratKeterangan' => $searchModelSuratKeterangan,
         ]);
     }
+    
+    public function actionKp() {
+        $searchModel = new PrdPengajuanSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('/prd-pengajuan/index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 
     /**
      * Displays a single SuratKeterangan model.
@@ -83,11 +94,7 @@ class SuratKeteranganController extends Controller {
         inner join formulir_pendaftaran fm on rm.no_formulir=fm.no_formulir
         inner join ta ta on vkms.tahun=ta.tahun
         where rm.nim='$nim' and vkms.tahun='$tahun' and vkms.idsmt='$idsmt'";
-
-
-
         $cmd = Yii::$app->db_simak->createCommand($sql)->queryAll();
-
         $model = new SuratKeterangan();
         foreach ($cmd as $mhs) {
             $model->nim = $mhs['nim'];
@@ -96,6 +103,8 @@ class SuratKeteranganController extends Controller {
             $model->alamat = $mhs['alamat_rumah'];
             $model->nama_semester = Krsmatkul::TampilNamaSemester($mhs['idsmt']);
             $model->idsmt = $mhs['idsmt'];
+            Yii::$app->session['genauth'] = $model->generateQr();
+            $model->authqr = Yii::$app->session['genauth'];
             $model->tahunsmt = $mhs['nim'] . '' . $mhs['tahun_akademik'] . '' . $mhs['idsmt'];
             $thsmt = $mhs['nim'] . '' . $mhs['tahun_akademik'] . '' . $mhs['idsmt'];
         }
@@ -214,22 +223,15 @@ class SuratKeteranganController extends Controller {
         inner join ta ta on vkms.tahun=ta.tahun
         inner join program_studi ps on vkms.kjur=ps.kjur
         where rm.nim='$nim' and vkms.tahun='$tahun' and vkms.idsmt='$idsmt'";
-
-
-
-
-        $qrCode = (new QrCode('This is my text'))
+        $genauth = Yii::$app->session['genauth'];
+        $qrCode = (new QrCode($genauth))
                 ->setSize(250)
                 ->setMargin(5)
                 ->useForegroundColor(0, 0, 0);
-        $qrCode->writeFile(__DIR__ . '/code.png'); // writer defaults to PNG when none is specified
+
+        $qrCode->writeFile(__DIR__ . '/qr/' . $genauth.'.png'); // writer defaults to PNG when none is specified
         header('Content-Type: ' . $qrCode->getContentType());
-
-//              echo $qrCode->writeString();
-//        echo '<img src"' . $qrCode->writeDataUri() . '">';
-//        exit;
         $cmd = Yii::$app->db_simak->createCommand($sql)->queryAll();
-
         foreach ($cmd as $data) {
             $nama_tahun = $data['tahun_akademik'];
         }
@@ -240,7 +242,7 @@ class SuratKeteranganController extends Controller {
         $html = $this->renderPartial('_export', [
             'dataProvider' => $cmd,
             'dataProviderNo' => $cmdNo,
-            'qr' => __DIR__ . '/code.png',
+            'qr' => __DIR__ . '/qr/' . "$genauth" . '.png',
             'puket1' => __DIR__ . '/puket1.jpg',
         ]);
         $mpdf = new mPDF('c', 'A4', '', '', 0, 0, 0, 0, 0, 0);
@@ -252,6 +254,7 @@ class SuratKeteranganController extends Controller {
     }
 
     public function actionExportPdf() {
+        $genauth = Yii::$app->session['genauth'];
         $nim = Yii::$app->session['nim'];
         $tahun = Yii::$app->session['tahun'];
         $idsmt = Yii::$app->session['idsmt'];
@@ -261,22 +264,13 @@ class SuratKeteranganController extends Controller {
         inner join ta ta on vkms.tahun=ta.tahun
         inner join program_studi ps on vkms.kjur=ps.kjur
         where rm.nim='$nim' and vkms.tahun='$tahun' and vkms.idsmt='$idsmt'";
-
-
-
-
-        $qrCode = (new QrCode('This is my text'))
+        $qrCode = (new QrCode($genauth))
                 ->setSize(250)
                 ->setMargin(5)
                 ->useForegroundColor(0, 0, 0);
-        $qrCode->writeFile(__DIR__ . '/code.png'); // writer defaults to PNG when none is specified
+        $qrCode->writeFile(__DIR__ . '/qr/' . "$genauth" . '.png');
         header('Content-Type: ' . $qrCode->getContentType());
-
-//              echo $qrCode->writeString();
-//        echo '<img src"' . $qrCode->writeDataUri() . '">';
-//        exit;
         $cmd = Yii::$app->db_simak->createCommand($sql)->queryAll();
-
         foreach ($cmd as $data) {
             $nama_tahun = $data['tahun_akademik'];
         }
@@ -287,7 +281,116 @@ class SuratKeteranganController extends Controller {
         $html = $this->renderPartial('_export', [
             'dataProvider' => $cmd,
             'dataProviderNo' => $cmdNo,
-            'qr' => __DIR__ . '/code.png',
+            'qr' => __DIR__ . '/qr/' . "$genauth" . '.png',
+            'puket1' => __DIR__ . '/puket1.jpg',
+        ]);
+        $mpdf = new mPDF('c', 'A4', '', '', 0, 0, 0, 0, 0, 0);
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->list_indent_first_level = 0;  // 1 or 0 - whether to indent the first level of a list
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+        exit;
+    }
+
+    public function actionValidasi($qr) {
+        $sql = "select count(*) from tbl_surat_keterangan where authqr=:qr";
+        $sqlKet = "select * from tbl_surat_keterangan where authqr=:qr";
+        $param = [':qr' => $qr];
+        $validasi = Yii::$app->db_akademik->createCommand($sql, $param)->queryScalar();
+        $keterangan = Yii::$app->db_akademik->createCommand($sqlKet, $param)->queryAll();
+
+
+        if ($validasi >= 1) {
+            foreach ($keterangan as $value) {
+                $nim = $value['nim'];
+                $nama = $value['nama'];
+                $tahun = $value['tahun'];
+                $semester = $value['idsmt'];
+            }
+            return $this->render('status', [
+                        'ada' => 1,
+                        'nim' => $nim,
+                        'nama' => $nama,
+                        'tahun' => $tahun,
+                        'semester' => Krsmatkul::TampilNamaSemester($semester),
+            ]);
+        } else {
+            return $this->render('status', [
+                        'ada' => 0,
+            ]);
+        }
+    }
+    
+    public function ExportPengantarKP() {
+        $nim = Yii::$app->session['nim'];
+        $tahun = Yii::$app->session['tahun'];
+        $idsmt = Yii::$app->session['idsmt'];
+        $sql = "select distinct vkms.nim,fm.nama_mhs,fm.alamat_rumah,ta.tahun_akademik,vkms.idsmt,ps.nama_ps,ps.konsentrasi from v_krsmhs vkms 
+        inner join register_mahasiswa rm on rm.nim=vkms.nim
+        inner join formulir_pendaftaran fm on rm.no_formulir=fm.no_formulir
+        inner join ta ta on vkms.tahun=ta.tahun
+        inner join program_studi ps on vkms.kjur=ps.kjur
+        where rm.nim='$nim' and vkms.tahun='$tahun' and vkms.idsmt='$idsmt'";
+        $genauth = Yii::$app->session['genauth'];
+        $qrCode = (new QrCode($genauth))
+                ->setSize(250)
+                ->setMargin(5)
+                ->useForegroundColor(0, 0, 0);
+
+        $qrCode->writeFile(__DIR__ . '/qr/' . $genauth.'.png'); // writer defaults to PNG when none is specified
+        header('Content-Type: ' . $qrCode->getContentType());
+        $cmd = Yii::$app->db_simak->createCommand($sql)->queryAll();
+        foreach ($cmd as $data) {
+            $nama_tahun = $data['tahun_akademik'];
+        }
+        $sqlNo = "select * from tbl_surat_keterangan 
+        where nim='$nim' and tahun='$nama_tahun' and idsmt='$idsmt'";
+
+        $cmdNo = Yii::$app->db_akademik->createCommand($sqlNo)->queryAll();
+        $html = $this->renderPartial('_export', [
+            'dataProvider' => $cmd,
+            'dataProviderNo' => $cmdNo,
+            'qr' => __DIR__ . '/qr/' . "$genauth" . '.png',
+            'puket1' => __DIR__ . '/puket1.jpg',
+        ]);
+        $mpdf = new mPDF('c', 'A4', '', '', 0, 0, 0, 0, 0, 0);
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->list_indent_first_level = 0;  // 1 or 0 - whether to indent the first level of a list
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+        exit;
+    }
+    
+    public function ExportPengantarSkripsi() {
+        $nim = Yii::$app->session['nim'];
+        $tahun = Yii::$app->session['tahun'];
+        $idsmt = Yii::$app->session['idsmt'];
+        $sql = "select distinct vkms.nim,fm.nama_mhs,fm.alamat_rumah,ta.tahun_akademik,vkms.idsmt,ps.nama_ps,ps.konsentrasi from v_krsmhs vkms 
+        inner join register_mahasiswa rm on rm.nim=vkms.nim
+        inner join formulir_pendaftaran fm on rm.no_formulir=fm.no_formulir
+        inner join ta ta on vkms.tahun=ta.tahun
+        inner join program_studi ps on vkms.kjur=ps.kjur
+        where rm.nim='$nim' and vkms.tahun='$tahun' and vkms.idsmt='$idsmt'";
+        $genauth = Yii::$app->session['genauth'];
+        $qrCode = (new QrCode($genauth))
+                ->setSize(250)
+                ->setMargin(5)
+                ->useForegroundColor(0, 0, 0);
+
+        $qrCode->writeFile(__DIR__ . '/qr/' . $genauth.'.png'); // writer defaults to PNG when none is specified
+        header('Content-Type: ' . $qrCode->getContentType());
+        $cmd = Yii::$app->db_simak->createCommand($sql)->queryAll();
+        foreach ($cmd as $data) {
+            $nama_tahun = $data['tahun_akademik'];
+        }
+        $sqlNo = "select * from tbl_surat_keterangan 
+        where nim='$nim' and tahun='$nama_tahun' and idsmt='$idsmt'";
+
+        $cmdNo = Yii::$app->db_akademik->createCommand($sqlNo)->queryAll();
+        $html = $this->renderPartial('_export', [
+            'dataProvider' => $cmd,
+            'dataProviderNo' => $cmdNo,
+            'qr' => __DIR__ . '/qr/' . "$genauth" . '.png',
             'puket1' => __DIR__ . '/puket1.jpg',
         ]);
         $mpdf = new mPDF('c', 'A4', '', '', 0, 0, 0, 0, 0, 0);

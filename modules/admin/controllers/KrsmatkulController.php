@@ -6,6 +6,7 @@ use app\models\simak\Krsmatkul;
 use app\models\simak\VNilaiKhsSearch;
 use app\modules\admin\AdminController;
 use hscstudio\export\OpenTBS;
+use app\models\simak\Ta;
 use Yii;
 use yii\data\SqlDataProvider;
 use yii\filters\VerbFilter;
@@ -181,6 +182,7 @@ class KrsmatkulController extends AdminController {
         $OpenTBS->LoadTemplate($template);
         $data = [];
         $no = 1;
+        $semester=Krsmatkul::TampilNamaSemester(Yii::$app->session['idsmt']);
         foreach ($cmd as $mhs) {
             $data[] = [
                 'no' => $no++,
@@ -188,7 +190,7 @@ class KrsmatkulController extends AdminController {
                 'nama_mhs' => $mhs['nama_mhs'],
             ];
         }
-
+    
         foreach ($cmdHeader as $header) {
             $dataHeader[] = [
                 'hari' => Krsmatkul::getHari($header['hari']),
@@ -199,15 +201,20 @@ class KrsmatkulController extends AdminController {
                 'namaruang' => $header['namaruang'],
                 'nama_kelas' => $header['nama_kelas'],
                 'nama_dosen' => $header['nama_dosen'],
+                'tahun'=>$this->ambilnamata(Yii::$app->session['tahun']),
+                'semester'=>\strtoupper($semester),
             ];
         }
         $OpenTBS->MergeBlock('data', $data);
         $OpenTBS->MergeBlock('dataHeader', $dataHeader);
         // Output the result as a file on the server. You can change output file
-        $OpenTBS->Show(OPENTBS_DOWNLOAD, '_uts.xlsx'); // Also merges all [onshow] automatic fields.
+        $OpenTBS->Show(OPENTBS_DOWNLOAD, $_GET["namadosen"].'_'.$_GET["kmatkul"].'_'.'_uts.xlsx'); // Also merges all [onshow] automatic fields.
         exit;
     }
+    public function ambilnamata($ta){
+        $tahun=new Ta();
+        $nama=$tahun::findOne($ta);
+        return $nama->tahun_akademik;
 
-    
-
+    }
 }
