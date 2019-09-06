@@ -1,47 +1,50 @@
 <?php
+/* @var $this View */
+/* @var $form ActiveForm */
+/* @var $model LoginForm */
 
-/* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\LoginForm */
-
-use yii\helpers\Html;
+use app\models\LoginForm;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\View;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>Please fill out the following fields to login:</p>
-
-    <?php $form = ActiveForm::begin([
-        'id' => 'login-form',
-        'layout' => 'horizontal',
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
-        ],
-    ]); ?>
-
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
-
-        <?= $form->field($model, 'password')->passwordInput() ?>
-
-        <?= $form->field($model, 'rememberMe')->checkbox([
-            'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
-        ]) ?>
-
-        <div class="form-group">
-            <div class="col-lg-offset-1 col-lg-11">
-                <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-            </div>
+<?php
+$form = ActiveForm::begin([
+    'id' => 'login-form',
+    'layout' => 'horizontal',
+    'fieldConfig' => [
+        'template' => "{label}\n<div class=\"col-lg-12\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
+        'labelOptions' => ['class' => 'col-lg-6 control-label'],
+    ],
+]);
+?>
+<div class="login-box">
+    <!--    <div class="login-logo">
+           SMKN 4 TANJUNGPINANG
+           <small>Sistem Informasi Piket</small>
+        </div>-->
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">e-akademik<br /><b>STT Indonesia</b></p>
+        <?=
+            $form->field($model, 'username', [
+                'inputTemplate' => '<div class="input-group"><span class="input-group-addon"><i class="fa fa-arrows"></i></span>{input}</div>'
+            ])->textInput()->input('username', ['placeholder' => 'Masukan Username'])->label(false);
+        ?>
+        <?=
+            $form->field($model, 'password', [
+                'inputOptions' => ['placeholder' => 'Masukan Password'],
+                'inputTemplate' => '<div class="input-group"><span class="input-group-addon"><i class="fa fa-key"></i></span>{input}</div>',
+            ])->passwordInput()->label(false);
+        ?>
+        <div class="social-auth-links text-center">
+            <?= Html::submitButton('Login', ['class' => 'btn btn-block btn-facebook btn-flat text-center']) ?>
+            <a href="<?= Url::to(['site/index']) ?>" class="btn btn-block btn-google btn-flat text-center">Home</a>
         </div>
-
-    <?php ActiveForm::end(); ?>
-
-    <div class="col-lg-offset-1" style="color:#999;">
-        You may login with <strong>admin/admin</strong> or <strong>demo/demo</strong>.<br>
-        To modify the username/password, please check out the code <code>app\models\User::$users</code>.
     </div>
 </div>
+<?php ActiveForm::end() ?>

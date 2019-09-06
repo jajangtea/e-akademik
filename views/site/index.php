@@ -29,7 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- small box -->
                     <div class="small-box bg-aqua">
                         <div class="inner">
-                            <h3><i class="fa fa-home"></i></h3>
+                            <a href="https://yiisolution.blogspot.com/">
+                                <h3><i class="fa fa-home"></i>
+                                </h3>
+                            </a>
                             <p>Surat Keterangan Aktif Kuliah</p>
                         </div>
                         <div class="icon">
@@ -41,7 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-3 col-xs-6">
                     <div class="small-box bg-green">
                         <div class="inner">
-                            <h3><i class="fa fa-television"></i></h3>
+                            <a href="https://yiisolution.blogspot.com/">
+                                <h3><i class="fa fa-television"></i>
+                                </h3>
+                            </a>
                             <p>Surat Pengantar KP dan Skripsi</p>
                         </div>
                         <div class="icon">
@@ -53,7 +59,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-3 col-xs-6">
                     <div class="small-box bg-yellow">
                         <div class="inner">
-                            <h3><i class="fa fa-graduation-cap"></i></h3>
+                            <a href="https://yiisolution.blogspot.com/">
+                                <h3><i class="fa fa-graduation-cap"></i>
+                                </h3>
+                            </a>
                             <p>SKKP</p>
                         </div>
                         <div class="icon">
@@ -65,7 +74,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-lg-3 col-xs-6">
                     <div class="small-box bg-red">
                         <div class="inner">
-                            <h3><i class="fa fa-internet-explorer"></i></h3>
+                            <a href="https://yiisolution.blogspot.com/">
+                                <h3><i class="fa fa-internet-explorer"></i>
+                                </h3>
+                            </a>
                             <p>SIMAK</p>
                         </div>
                         <div class="icon">

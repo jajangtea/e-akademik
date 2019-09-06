@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\models\User;
 use OAuth2\Request;
 use Yii;
 use yii\filters\AccessControl;
@@ -77,7 +76,7 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
+        $this->layout = 'mainLogin';
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
@@ -95,7 +94,6 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
@@ -106,6 +104,7 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
@@ -158,7 +157,7 @@ class SiteController extends Controller
 
         /** @var $module \filsh\yii2\oauth2server\Module */
         $module = Yii::$app->getModule('oauth2');
-        $response = $module->getServer()->handleAuthorizeRequest(Request::createFromGlobals(), new \OAuth2\Response(),!Yii::$app->getUser()->getIsGuest(), Yii::$app->getUser()->getId());
+        $response = $module->getServer()->handleAuthorizeRequest(Request::createFromGlobals(), new \OAuth2\Response(), !Yii::$app->getUser()->getIsGuest(), Yii::$app->getUser()->getId());
         /** @var object $response \OAuth2\Response */
         Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 

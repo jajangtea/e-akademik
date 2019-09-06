@@ -50,7 +50,7 @@ class PrdPengajuan extends \yii\db\ActiveRecord
             [['IDJenisSidang', 'NIM', 'IDstatusProposal', 'idPeriode'], 'integer'],
             [['TanggalDaftar'], 'safe'],
             [['Judul', 'keterangan'], 'string'],
-            [['idPeriode'], 'required'],
+            [['idPeriode', 'keterangan'], 'required', 'message' => 'Nama Perusahaan wajib diisi.'],
             [['IDJenisSidang'], 'exist', 'skipOnError' => true, 'targetClass' => PrdJenissidang::className(), 'targetAttribute' => ['IDJenisSidang' => 'IDJenisSidang']],
             [['IDstatusProposal'], 'exist', 'skipOnError' => true, 'targetClass' => PrdStatusproposal::className(), 'targetAttribute' => ['IDstatusProposal' => 'idstatusProp']],
             [['NIM'], 'exist', 'skipOnError' => true, 'targetClass' => PrdMahasiswa::className(), 'targetAttribute' => ['NIM' => 'NIM']],

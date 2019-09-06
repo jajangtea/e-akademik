@@ -21,7 +21,7 @@ use yii\helpers\Url;
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">
                         <?=
-                            Yii::$app->user->isGuest ? (Html::a('<i class="fa fa-lock"></i> Login', ['/site/login'], ['class' => 'btn btn-flat'])) : Html::a(
+                            Yii::$app->user->isGuest ? (Html::a('<i class="fa fa-lock"></i> Login', ['/admin'], ['class' => 'btn btn-flat'])) : Html::a(
                                 '<i class="fa fa-unlock"></i> Sign out',
                                 ['/site/logout'],
                                 ['data-method' => 'post', 'class' => 'btn btn-flat']

@@ -1,17 +1,18 @@
 <?php
+
 use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
 
-if (Yii::$app->controller->action->id === 'login') { 
-/**
- * Do not use this code in your template. Remove it. 
- * Instead, use the code  $this->layout = '//main-login'; in your controller.
- */
+if (Yii::$app->controller->action->id === 'login') {
+    /**
+     * Do not use this code in your template. Remove it. 
+     * Instead, use the code  $this->layout = '//main-login'; in your controller.
+     */
     echo $this->render(
-        'main-login',
+        'mainLogin',
         ['content' => $content]
     );
 } else {
@@ -24,30 +25,33 @@ if (Yii::$app->controller->action->id === 'login') {
     <?php $this->beginPage() ?>
     <!DOCTYPE html>
     <html lang="<?= Yii::$app->language ?>">
+
     <head>
-        <meta charset="<?= Yii::$app->charset ?>"/>
+        <meta charset="<?= Yii::$app->charset ?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
+
     <body class="skin-blue layout-top-nav">
-    <?php $this->beginBody() ?>
-    <div class="wrapper">
+        <?php $this->beginBody() ?>
+        <div class="wrapper">
 
-        <?= $this->render(
-            'header.php',
-            ['directoryAsset' => $directoryAsset]
-        ) ?>
-        <?= $this->render(
-            'content.php',
-            ['content' => $content, 'directoryAsset' => $directoryAsset]
-        ) ?>
+            <?= $this->render(
+                    'header.php',
+                    ['directoryAsset' => $directoryAsset]
+                ) ?>
+            <?= $this->render(
+                    'content.php',
+                    ['content' => $content, 'directoryAsset' => $directoryAsset]
+                ) ?>
 
-    </div>
+        </div>
 
-    <?php $this->endBody() ?>
+        <?php $this->endBody() ?>
     </body>
+
     </html>
     <?php $this->endPage() ?>
 <?php } ?>

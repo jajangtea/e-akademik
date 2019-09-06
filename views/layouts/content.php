@@ -1,12 +1,8 @@
 <?php
 
-use app\models\simak\Krsmatkul;
-use app\models\simak\ProgramStudi;
-use app\models\simak\Ta;
 use dmstr\widgets\Alert;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
-use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 ?>
 <div class="content-wrapper">
@@ -16,46 +12,46 @@ use yii\widgets\Breadcrumbs;
         <?php } else { ?>
             <h1 style="font-weight: 300">
                 <?php
-                if ($this->title !== null) {
-                    echo Html::encode($this->title);
-                } else {
-                    echo Inflector::camel2words(
+                    if ($this->title !== null) {
+                        echo Html::encode($this->title);
+                    } else {
+                        echo Inflector::camel2words(
                             Inflector::id2camel($this->context->module->id)
-                    );
-                    echo ($this->context->module->id !== Yii::$app->id) ? '<small>Module</small>' : 's';
-                }
-                ?>
+                        );
+                        echo ($this->context->module->id !== Yii::$app->id) ? '<small>Module</small>' : 's';
+                    }
+                    ?>
             </h1>
 
         <?php } ?>
 
         <?=
-        Breadcrumbs::widget(
+            Breadcrumbs::widget(
                 [
                     'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                 ]
-        )
+            )
         ?>
     </section>
-	
+
     <div class="wrapper">
 
-      <div class="content-wrapper">
+        <div class="content-wrapper">
 
             <div class="container">
-    <section class="content">
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </section>
-	</div>
-	</div>
-	</div>
+                <section class="content">
+                    <?= Alert::widget() ?>
+                    <?= $content ?>
+                </section>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
         <b>Version</b> 2.0
     </div>
-    <strong>Copyright &copy; 2014-2015 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
+    <strong>Copyright &copy; <?= date('Y') ?> <a href="https://yiisolution.blogspot.com/">Yii Solution</a> | <a href="https://www.contohapps.com/">Contoh Aplikasi</a></strong> | <strong><a href="http://sttindonesia.ac.id/">STT Indonesia</a>.</strong> All rights
     reserved.
 </footer>
